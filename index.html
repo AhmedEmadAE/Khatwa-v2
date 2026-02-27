@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>خطوة</title>
+    <!-- PWA Setup -->
+    <meta name="theme-color" content="#1abc9c">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/334/334036.png">
+
+    <!-- Fonts -->
+    <!-- Google Fonts: Cairo & Amiri -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar glass">
+        <div class="nav-content">
+            <div class="nav-brand">
+                <i class="fas fa-mosque"></i> خطوة
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">الرئيسية</a></li>
+                <li><a href="#prayer-times">الصلاة</a></li>
+                <li><a href="#adhkar">الأذكار</a></li>
+                <li><a href="#tasbeeh">المسبحة</a></li>
+                <li><a href="#quran">القرآن</a></li>
+                <li><a href="#qibla">القبلة</a></li>
+                <li><a href="#download-app" id="nav-download-link" style="display: none; color: var(--accent-color);"><i
+                            class="fas fa-download"></i> التطبيق</a></li>
+            </ul>
+            <!-- Top Controls: Theme & Font Size -->
+            <div class="top-controls">
+                <button id="install-btn" class="control-btn" aria-label="تنزيل التطبيق" title="تنزيل التطبيق"
+                    style="display: none;">
+                    <i class="fas fa-download"></i>
+                </button>
+                <button id="theme-toggle" class="control-btn" aria-label="تبديل المظهر" title="تغيير المظهر">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button id="font-increase" class="control-btn" aria-label="تكبير الخط" title="تكبير الخط">
+                    <i class="fas fa-search-plus"></i>
+                </button>
+                <button id="font-decrease" class="control-btn" aria-label="تصغير الخط" title="تصغير الخط">
+                    <i class="fas fa-search-minus"></i>
+                </button>
+            </div>
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-toggle" id="mobile-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hidden Audio Player for Adhan -->
+    <audio id="adhan-player" preload="none"></audio>
+
+    <div class="container" id="home">
+        <!-- Header Section -->
+        <header class="header slide-down">
+            <div class="bismillah">﷽</div>
+            <h1>مواقيت الصلاة</h1>
+            <p class="subtitle">إن الصلاة كانت على المؤمنين كتاباً موقوتاً</p>
+        </header>
+
+        <!-- Date & Location & Audio Section -->
+        <section class="info-section fade-in">
+            <div class="date-card card glass">
+                <div class="icon-wrapper"><i class="fas fa-calendar-alt"></i></div>
+                <div class="date-info">
+                    <h2 id="hijri-date">جارِ التحميل...</h2>
+                    <p id="gregorian-date">جارِ التحميل...</p>
+                </div>
+            </div>
+
+            <div class="location-card card glass">
+                <div class="icon-wrapper"><i class="fas fa-map-marker-alt"></i></div>
+                <div class="location-info">
+                    <h2 id="location-name">تحديد الموقع التلقائي</h2>
+                    <p id="location-status">جاري البحث عن الموقع...</p>
+                </div>
+                <button id="locate-btn" class="btn"><i class="fas fa-location-arrow"></i> تحديث</button>
+            </div>
+
+            <div class="settings-card card glass">
+                <div class="icon-wrapper"><i class="fas fa-microphone-alt"></i></div>
+                <div class="settings-info" style="flex-grow: 1;">
+                    <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">صوت الأذان</h2>
+                    <select id="muadhin-select" class="custom-select">
+                        <option value="alafasy">مشاري العفاسي</option>
+                        <option value="abdulbasit">عبد الباسط عبد الصمد</option>
+                        <option value="sudais">عبد الرحمن السديس</option>
+                    </select>
+                </div>
+                <!-- Test Adhan Voice Button -->
+                <button id="test-audio-btn" class="btn"><i class="fas fa-play"></i> تجربة الأذان</button>
+            </div>
+        </section>
+
+        <!-- Next Prayer Countdown -->
+        <section class="next-prayer-section fade-in-up">
+            <div class="countdown-card glass" id="countdown-card">
+                <h2>الصلاة القادمة</h2>
+                <h1 id="next-prayer-name">--</h1>
+                <div class="timer" id="countdown-timer">00:00:00</div>
+                <p id="reminder-status" class="status-msg"></p>
+                <button id="enable-notifications" class="btn notification-btn">
+                    <i class="fas fa-bell"></i> تفعيل التنبيهات (قبل 10 دقائق)
+                </button>
+            </div>
+        </section>
+
+        <!-- Prayer Times Grid -->
+        <section class="prayer-times-grid fade-in-up delay-1" id="prayer-times">
+            <div class="prayer-card glass" id="card-Fajr">
+                <div class="prayer-icon"><i class="fas fa-network-wired fa-rotate-180"></i></div>
+                <h3>الفجر</h3>
+                <div class="time" id="time-Fajr">--:--</div>
+            </div>
+            <div class="prayer-card glass" id="card-Sunrise">
+                <div class="prayer-icon"><i class="fas fa-sun" style="opacity: 0.7;"></i></div>
+                <h3>الشروق</h3>
+                <div class="time" id="time-Sunrise">--:--</div>
+            </div>
+            <div class="prayer-card glass" id="card-Dhuhr">
+                <div class="prayer-icon"><i class="fas fa-sun" style="color: var(--gold)"></i></div>
+                <h3>الظهر</h3>
+                <div class="time" id="time-Dhuhr">--:--</div>
+            </div>
+            <div class="prayer-card glass" id="card-Asr">
+                <div class="prayer-icon"><i class="fas fa-cloud-sun"></i></div>
+                <h3>العصر</h3>
+                <div class="time" id="time-Asr">--:--</div>
+            </div>
+            <div class="prayer-card glass" id="card-Maghrib">
+                <div class="prayer-icon"><i class="fas fa-moon" style="color: #ff9f43"></i></div>
+                <h3>المغرب</h3>
+                <div class="time" id="time-Maghrib">--:--</div>
+            </div>
+            <div class="prayer-card glass" id="card-Isha">
+                <div class="prayer-icon"><i class="fas fa-star-and-crescent"></i></div>
+                <h3>العشاء</h3>
+                <div class="time" id="time-Isha">--:--</div>
+            </div>
+        </section>
+
+        <!-- Adhkar Section -->
+        <section class="adhkar-section fade-in-up mt-3" id="adhkar" style="display: none;">
+            <div class="adhkar-card glass card-full">
+                <div class="adhkar-header">
+                    <i class="fas fa-book-open"></i>
+                    <h2 id="adhkar-title">أذكار</h2>
+                </div>
+                <div id="adhkar-content" class="adhkar-text"></div>
+            </div>
+        </section>
+
+        <!-- Tasbeeh Section -->
+        <section class="tasbeeh-section fade-in-up mt-3" id="tasbeeh">
+            <div class="tasbeeh-card glass card-full text-center">
+                <div class="adhkar-header justify-center mb-2">
+                    <i class="fas fa-hand-holding-heart"></i>
+                    <h2>المسبحة الإلكترونية</h2>
+                </div>
+
+                <div class="tasbeeh-container mx-auto">
+                    <div class="tasbeeh-display" id="tasbeeh-count">0</div>
+
+                    <div class="tasbeeh-controls">
+                        <button id="tasbeeh-btn" class="tasbeeh-main-btn" aria-label="تسبيح">
+                            <div class="finger-print"><i class="fas fa-fingerprint"></i></div>
+                        </button>
+
+                        <button id="tasbeeh-reset" class="tasbeeh-reset-btn" aria-label="تصفير">
+                            <i class="fas fa-undo-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quran Section -->
+        <section class="quran-section fade-in-up mt-3" id="quran">
+            <div class="quran-card glass card-full">
+                <div class="adhkar-header">
+                    <i class="fas fa-quran"></i>
+                    <h2>القرآن الكريم</h2>
+                </div>
+
+                <div class="quran-controls mt-2">
+                    <div class="info-section" style="margin-bottom: 0;">
+                        <div class="control-group" style="flex: 1;">
+                            <label for="quran-reciter">القارئ:</label>
+                            <select id="quran-reciter" class="custom-select">
+                                <option value="afs">مشاري العفاسي</option>
+                                <option value="basit_mjwd">عبد الباسط عبد الصمد (مجود)</option>
+                                <option value="sds">عبد الرحمن السديس</option>
+                                <option value="yasser">ياسر الدوسري</option>
+                                <option value="maher">ماهر المعيقلي</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group" style="flex: 1;">
+                            <label for="quran-surah">السورة:</label>
+                            <select id="quran-surah" class="custom-select">
+                                <!-- Populated via JS -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="audio-player-wrapper mt-3">
+                    <audio id="quran-audio" preload="none"></audio>
+
+                    <div class="custom-audio-player glass">
+                        <button id="play-pause-btn" class="play-btn" aria-label="تشغيل/إيقاف">
+                            <i class="fas fa-play"></i>
+                        </button>
+
+                        <div class="progress-container">
+                            <span id="current-time" class="time-label">00:00</span>
+                            <input type="range" id="seek-bar" class="seek-bar" value="0" min="0" step="1">
+                            <span id="duration-time" class="time-label">00:00</span>
+                        </div>
+
+                        <div class="volume-container">
+                            <i class="fas fa-volume-up" id="mute-btn"></i>
+                            <input type="range" id="volume-bar" class="volume-bar" value="100" min="0" max="100"
+                                step="1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quran-actions mt-3" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button id="read-quran-btn" class="main-btn" style="flex: 1; min-width: 200px;">
+                        <i class="fas fa-book-open"></i> افتح المصحف
+                    </button>
+                    <button id="continue-reading-btn" class="main-btn"
+                        style="flex: 1; min-width: 200px; display: none; background: var(--gold); color: #000;">
+                        <i class="fas fa-bookmark"></i> متابعة القراءة (<span id="bookmark-page-display">1</span>)
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Qibla Finder Section -->
+        <section class="qibla-section fade-in-up mt-3" id="qibla">
+            <div class="qibla-card glass card-full text-center">
+                <h2>اتجاه القبلة <i class="fas fa-kaaba" style="color: var(--gold)"></i></h2>
+
+                <div class="compass-wrapper mx-auto">
+                    <div class="compass-circle" id="compass-circle">
+                        <div class="compass-arrow"><i class="fas fa-long-arrow-alt-up"></i></div>
+                    </div>
+                </div>
+
+                <p id="qibla-status" class="status-msg mt-2">يرجى العلم أن هذه الميزة تتطلب هاتفاً محمولاً مزوداً
+                    بمستشعر اتجاهات.</p>
+                <button id="enable-compass-btn" class="btn mx-auto mt-2"><i class="fas fa-compass"></i> تفعيل
+                    البوصلة</button>
+            </div>
+        </section>
+
+        <!-- Download App Section -->
+        <section class="download-section fade-in-up mt-3" id="download-app" style="display: none;">
+            <div class="install-card glass card-full text-center">
+                <img src="https://cdn-icons-png.flaticon.com/512/334/334036.png" alt="أيقونة تطبيق خطوة"
+                    class="app-icon">
+                <h2>تطبيق خطوة</h2>
+                <p class="mt-2 status-msg">قم بتنزيل "خطوة" كتطبيق على جهازك للوصول السريع بدون إنترنت لتصفح القرآن
+                    والأذكار وتلقي تنبيهات الصلاة.</p>
+                <button id="main-install-btn" class="main-btn mx-auto mt-2"
+                    style="font-size: 1.2rem; padding: 1rem 2rem;">
+                    <i class="fas fa-download"></i> تثبيت التطبيق الآن
+                </button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer fade-in-up mt-3">
+            <p>جميع حقوق الملكية محفوظة لـ أحمد عماد &copy; 2026</p>
+        </footer>
+    </div>
+
+    <!-- Quran Reading Modal -->
+    <div id="quran-modal" class="quran-modal">
+        <div class="quran-modal-content glass" style="max-width: 800px; padding: 1.5rem;">
+            <div class="quran-modal-header" style="margin-bottom: 1rem;">
+                <h2 id="quran-modal-title" style="font-size: 1.5rem;">جاري التحميل...</h2>
+                <div class="header-actions" style="display: flex; gap: 1rem;">
+                    <button id="save-bookmark-btn" class="control-btn" title="حفظ العلامة للتوقف هنا"><i
+                            class="far fa-bookmark"></i></button>
+                    <button id="close-quran-modal" class="close-btn"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+
+            <div id="quran-text-container" class="quran-page-container">
+                <!-- Text will be loaded here -->
+            </div>
+
+            <div class="quran-pagination mt-2"
+                style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                <button id="next-page-btn" class="main-btn" style="padding: 0.5rem 1rem; font-size: 1rem;"><i
+                        class="fas fa-chevron-right"></i> الصفحة التالية</button>
+                <div class="page-number"
+                    style="font-weight: bold; font-family: 'Amiri', serif; font-size: 1.2rem; color: var(--accent-color);">
+                    صفحة <span id="current-page-num">1</span>
+                </div>
+                <button id="prev-page-btn" class="main-btn" style="padding: 0.5rem 1rem; font-size: 1rem;">السابقة <i
+                        class="fas fa-chevron-left"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

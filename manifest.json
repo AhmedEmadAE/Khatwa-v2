@@ -1,0 +1,21 @@
+{
+    "name": "خطوة",
+    "short_name": "خطوة",
+    "description": "تطبيق إسلامي شامل لمواقيت الصلاة، الأذكار، القرآن، واتجاه القبلة",
+    "start_url": "./",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#1abc9c",
+    "icons": [
+        {
+            "src": "https://cdn-icons-png.flaticon.com/512/334/334036.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "https://cdn-icons-png.flaticon.com/512/334/334036.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
