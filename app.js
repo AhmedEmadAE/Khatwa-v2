@@ -413,7 +413,8 @@ function openMushaf(page) {
 
 async function loadMushafPage(pageNum) {
     quranTextContainer.innerHTML = '<div class="loader-text">جاري تحميل الصفحة... <i class="fas fa-spinner fa-spin"></i></div>';
-    currentPageNumEl.textContent = pageNum;
+    const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    currentPageNumEl.textContent = pageNum.toString().replace(/\d/g, d => arabicDigits[d]);
 
     // Update bookmark icon state
     const savedBookmark = localStorage.getItem('mushafBookmark');
@@ -810,7 +811,8 @@ function checkAndSendNotificationAndAudio(prayerName, timeDiffMs) {
     const dateStr = new Date().toLocaleDateString();
 
     // 1. Remind 10 mins before (Notification only)
-    if (timeDiffMs <= triggerTimeMs && timeDiffMs > (triggerTimeMs - 2000)) {
+    // Window: between 10:00 and 9:30 remaining (30s window for reliability)
+    if (timeDiffMs <= triggerTimeMs && timeDiffMs > (triggerTimeMs - 30000)) {
         const prayerKey = `${prayerName}-10min-${dateStr}`;
         if (!notifiedPrayers.has(prayerKey)) {
             notifiedPrayers.add(prayerKey);
@@ -819,7 +821,8 @@ function checkAndSendNotificationAndAudio(prayerName, timeDiffMs) {
     }
 
     // 2. Exact Prayer Time (Audio + Notification)
-    if (timeDiffMs <= 3000 && timeDiffMs > 0) { // 3s window
+    // Window: 30 seconds before to exactly 0 (30s window for reliability)
+    if (timeDiffMs <= 30000 && timeDiffMs >= 0) {
         const prayerKeyExact = `${prayerName}-exact-${dateStr}`;
         if (!notifiedPrayers.has(prayerKeyExact)) {
             notifiedPrayers.add(prayerKeyExact);
@@ -872,7 +875,19 @@ function initCompass() {
             startCompassListener();
         }
     } else {
-        qiblaStatus.textContent = "حساس الاتجاهات غير متوفر في جهازك المكتبي.";
+        // Desktop: show static Qibla direction
+        if (qiblaHeading !== null) {
+            compassCircle.style.transform = `rotate(${qiblaHeading}deg)`;
+            const icon = compassCircle.querySelector('i');
+            if (icon) {
+                icon.className = 'fas fa-kaaba';
+                icon.style.color = 'var(--gold)';
+            }
+            qiblaStatus.textContent = `اتجاه القبلة: ${Math.round(qiblaHeading)}° من الشمال. قم بتوجيه جهازك نحو هذا الاتجاه.`;
+            compassBtn.style.display = 'none';
+        } else {
+            qiblaStatus.textContent = "لم يتم تحديد الموقع بعد. اضغط تحديث الموقع أولاً.";
+        }
     }
 }
 
